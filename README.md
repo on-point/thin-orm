@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # thin-orm
 
 Thin-orm is a minimalist Object Relational Mapper (ORM). Thin-orm provides you with a
@@ -36,3 +37,9 @@ web framework:
 ## License
 
 MIT
+=======
+thin-orm
+========
+
+A node.js object relation mapper for SQL databases
+>>>>>>> 3118b76d835d5ff2d23daf491f3d12ba6c212713
