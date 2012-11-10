@@ -1,0 +1,18 @@
+{
+  "name": "thin-orm",
+  "version": "0.1.0",
+  "description": "An object relational mapper for SQL databases",
+  "main": "main",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {"node": ">= 0.6.0"},
+  "repository": "",
+  "keywords": [
+    "orm",
+    "postgresql",
+    "sql"
+  ],
+  "author": "Steve Hurlbut <steve@onpointapplications.com>",
+  "license": "MIT"
+}
