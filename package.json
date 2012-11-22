@@ -4,13 +4,26 @@
   "description": "An object relational mapper for SQL databases",
   "main": "main",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodeunit test"
   },
-  "engines": {"node": ">= 0.6.0"},
-  "repository": "",
+  "devDependencies": {
+        "nodeunit": "0.7.x",
+        "async": "0.1.x",
+        "pg": "0.8.x",
+        "sqlite3": "2.1.x"
+  },
+  "engines": {"node": ">= 0.8.0"},
+  "repository": {
+      "type": "git",
+      "url": "http://github.com/on-point/thin-orm.git"
+  },
   "keywords": [
+    "database",
     "orm",
+    "postgres",
     "postgresql",
+    "sqlite",
+    "sqlite3",
     "sql"
   ],
   "author": "Steve Hurlbut <steve@onpointapplications.com>",

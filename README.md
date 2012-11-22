@@ -9,6 +9,7 @@ just about as fast as if you had written them in native SQL.
 Thin-orm sits on top of a node client for your database. It has built in support for the following clients:
 * postgresql: [node-postgres (pg)](https://github.com/brianc/node-postgres)
 * sqlite3: [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
+
 If your SQL database is not listed here, don't worry. Interfacing to a node database driver is
 really easy. Take a look at the examples in the drivers directory.
 
@@ -104,7 +105,7 @@ userClient.findMany({ criteria: { id: { LT: 3 } } }, callback)
 
 #### Sorting
 
-You can sort the rows return by the query.
+You can sort the rows returned by the query.
 ```js
 userClient.findMany({ criteria: { firstName: { LIKE: { 'J%' }}}, sort: { lastName: "DESC" }}, callback);
 // callback result: { count: 2, rows: \[ { id: 1, login: "joe", firstName: "Joe", lastName: "Smith" }
