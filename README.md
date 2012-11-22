@@ -118,6 +118,7 @@ userClient.findMany({ criteria: { firstName: { LIKE: { 'J%' }}}, sort: { lastNam
 
 If you need to sort on multiple columns, you can pass an array of sort criteria with the primary sort
 column listed first.
+
 ```js
 userClient.findMany({ sort: [ { lastName: "ASC" }, { firstName: "ASC" } ] }, callback);
 // callback result: { count: 211, rows: \[ { id: 21, login: "sama" , firstName: "Sam", lastName: "Abrams" }
