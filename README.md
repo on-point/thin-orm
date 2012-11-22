@@ -89,6 +89,7 @@ userClient.findOne({ criteria: { firstName: 'Joe', lastName: 'Smith' } }, callba
 A *criteria* object specifies the filter that is applied to the rows in a table.
 
 A simple equality filter:
+
 ```js
 userClient.findMany({ criteria: { firstName: 'Joe' } }, callback)
 // callback result: { count: 2, rows: \[ { id: 1, login: "joe", firstName: "Joe", lastName: "Smith" }
@@ -97,6 +98,7 @@ userClient.findMany({ criteria: { firstName: 'Joe' } }, callback)
 
 You can use the operators LT (less than), LTE (less than or equal), GT (greater than), GTE (greater than or equal),
 NE (not equal) and LIKE (wild card match) as part of your criteria:
+
 ```js
 userClient.findMany({ criteria: { id: { LT: 3 } } }, callback)
 // callback result: { count: 2, rows: \[ { id: 1, login: "joe", firstName: "Joe", lastName: "Smith" }
@@ -106,6 +108,7 @@ userClient.findMany({ criteria: { id: { LT: 3 } } }, callback)
 #### Sorting
 
 You can sort the rows returned by the query.
+
 ```js
 userClient.findMany({ criteria: { firstName: { LIKE: { 'J%' }}}, sort: { lastName: "DESC" }}, callback);
 // callback result: { count: 2, rows: \[ { id: 1, login: "joe", firstName: "Joe", lastName: "Smith" }
@@ -146,6 +149,7 @@ joins will automatically be added to all queries against the table.
 Currently, you cannot nest joins.
 
 Here are some examples:
+
 ```js
 orm.table('users')
    .columns('id', 'login', 'firstName', 'lastName', 'createdAt');
