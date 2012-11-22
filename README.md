@@ -7,6 +7,7 @@ The _thin_ in thin-orm means that very little additional processing is done; you
 just about as fast as if you had written them in native SQL.
 
 Thin-orm sits on top of a node client for your database. It has built in support for the following clients:
+
 * postgresql: [node-postgres (pg)](https://github.com/brianc/node-postgres)
 * sqlite3: [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
 
@@ -180,6 +181,7 @@ blogClient.findMany({ criteria:{ userId:1 }, joins: \[ 'comments' \] }, callback
 If you wish, thin-orm can automatically send a JSON response to a REST request. Instead of passing a callback
 function as the last response, pass in a response object. If the response object has a `send` method, then
 thin-orm will call that method with the result rows. The data returned to the caller wil be:
+
 * `findById` or `findOne` will return a single object
 * `findMany` will return an array of JSON objects
 * `create` will return an object with an `id` field set to the id of the new record
