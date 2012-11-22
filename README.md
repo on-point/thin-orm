@@ -30,8 +30,6 @@ interface. The minimal configuration is shown here:
 
 ```js
 var orm = require('thin-orm'),
-    sqlite3 = require('sqlite3').verbose(),
-    db = new sqlite3.Database(':memory:');
 
 orm.table('users')
    .columns('id', 'login', 'firstName', 'lastName', 'createdAt');
@@ -40,8 +38,10 @@ orm.table('users')
 Now we are ready to create a client driver connection and run queries:
 
 ```js
-var driver = orm.createDriver('sqlite', { db: db }) });
-var userClient = ORM.createClient(driver, 'users');
+var sqlite3 = require('sqlite3').verbose(),
+    db = new sqlite3.Database(':memory:'),
+    driver = orm.createDriver('sqlite', { db: db }) }),
+    userClient = ORM.createClient(driver, 'users');
 
 userClient.create({ data: { login: 'joe', firstName: 'Joe', lastName: 'Smith'}}, callback);
 // callback result: { id: 1 }
