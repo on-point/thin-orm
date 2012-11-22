@@ -62,8 +62,7 @@ CRUD.prototype.findOne = function(options, callback) {
     query += this.applyJoins(options);
     query += this.applyCriteria(options, values);
 
-    if (typeof(callback) !== 'function')
-        callback = CRUD.returnOne(callback);
+    callback = CRUD.returnOne(callback);
 
     this.driver.query(query, values, this.tableName, callback);
 };
@@ -194,7 +193,7 @@ CRUD.prototype.applyJoins = function(options) {
 
 // build a join clause
 CRUD.prototype.join = function(criteria) {
-    var query = ' JOIN ' + criteria.table + ' ON ',
+    var query = ' LEFT OUTER JOIN ' + criteria.table + ' ON ',
         childTable = TableRegistry.getTableDefinition(criteria.table),
         onClauses = [],
         self = this;
@@ -249,6 +248,10 @@ CRUD.prototype.applyCriteria = function(options, values) {
                     case 'GTE': operator = '>='; break;
                     case 'ne':
                     case 'NE': operator = '<>'; break;
+                    case 'like':
+                    case 'LIKE': operator = 'LIKE'; break;
+                    case 'ilike':
+                    case 'ILIKE': operator = 'ILIKE'; break;
                 }
                 if (operator) {
                     if ((operator === '<>') && (value[keys[0]] === null)) {
@@ -336,11 +339,18 @@ CRUD.prototype.createJoinCallback = function (options, callback) {
                 var columns = join.columns;
                 if (!currentRow[join.name])
                     currentRow[join.name] = [];
-                currentRow[join.name].push(data);
+
+                var haveData = false;
                 for (var c = 0; c < columns.length; c++) {
-                    data[columns[c]] = row[join.name + '.' + columns[c]];
-                    delete row[join.name + '.' + columns[c]];
+                    var name = join.name + '.' + columns[c];
+                    if (row[name]) {
+                        data[columns[c]] = row[name];
+                        haveData = true;
+                    }
+                    delete row[name];
                 }
+                if (haveData)
+                    currentRow[join.name].push(data);
             }
         }
         self.logger('\n\tconverted to ' + JSON.stringify(resultHash.items));
@@ -379,10 +389,20 @@ CRUD.returnMany = function(response) {
 CRUD.returnOne = function(response) {
     return function(err, result) {
         if (err) {
-            response.send('[ database error: ' + err + ']', 500);
+            if (response.send)
+                response.send('[ database error: ' + err + ']', 500);
+            else if (typeof response === "function")
+                response(err, result);
         } else {
-            CRUD.clean(result.rows[0]);
-            response.send(result.rows[0]);
+            if (response.send) {
+                CRUD.clean(result.rows[0]);
+                response.send(result.rows[0]);
+            } else if (typeof response === "function") {
+                if (result.rows)
+                    response(null, result.rows[0]);
+                else
+                    response(null, result);
+            }
         }
     }
 };

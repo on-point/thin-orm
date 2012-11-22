@@ -56,7 +56,7 @@ exports['a simple findById query'] = function (t) {
 
 exports['a query with sorted results'] = function (t) {
     setup();
-    blogs.findMany({ sort:{ createdAt: "DESC" }}, callback);
+    blogs.findMany({ sort: { createdAt: "DESC" }}, callback);
     t.equal(data.params.length, 0);
     t.ok(/SELECT\s+id.*user_id.*text.*created_at.*FROM\s+blogs\s+ORDER\s+BY\s+created_at\s+DESC/.test(data.query), 'generates a select');
     t.ok(data.callbackCalled, "callback was called");

@@ -4,7 +4,7 @@ function createTestDriver(context, options) {
         query: function testDriver(query, parameters, id, cb) {
             options.data.query = query;
             options.data.params = parameters;
-            cb();
+            cb(null, { count: 0, rows: [] });
         },
 
         getInsertQueryText:function (table) {

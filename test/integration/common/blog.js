@@ -4,7 +4,9 @@ var ORM = require('../../../main'),
     userClient,
     blogClient,
     commentClient,
+    counter = 0;
     userIds = {},
+    userNames = {},
     blogIds = {},
     commentIds = {},
     prefix = 'thinorm_',
@@ -25,7 +27,8 @@ exports['table definition'] = function (t) {
     userClient = ORM.createClient(driver, usersTableName);
     ORM.table(blogsTableName)
         .columns(blogColumns)
-        .join('login').oneToOne(usersTableName).on({ userId: 'id' }).columnMap({ name: 'login' });
+        .join('login').oneToOne(usersTableName).on({ userId: 'id' }).columnMap({ name: 'login' })
+        .join('comments').oneToMany(commentsTableName).on({ id: 'blogId' });
     blogClient = ORM.createClient(driver, blogsTableName);
     ORM.table(commentsTableName)
         .columns(commentColumns);
@@ -38,21 +41,24 @@ exports['load test data'] = function(t) {
 
     var userIterator = function(info, cb) {
         userClient.create(info, function(err, result) {
-           if (!err) userIds[info.data.login] = result.id;
+           if (!err) {
+               userIds[info.data.login] = result.id;
+               userNames[result.id] = info.data.login;
+           }
            cb(err);
         });
     };
     var blogIterator = function (info, cb) {
-        var counter = 1;
         blogClient.create(info, function (err, result) {
-            if (!err) blogIds["" + info.data.userId + counter++] = result.id;
+            counter += 1;
+            if (!err) blogIds["" + userNames[info.data.userId] + counter] = result.id;
             cb(err);
         });
     };
     var commentIterator = function (info, cb) {
-        var counter = 1;
         commentClient.create(info, function (err, result) {
-            if (!err) commentIds["" + info.data.userId + counter++] = result.id;
+            counter += 1;
+            if (!err) commentIds["" + info.data.userId + counter] = result.id;
             cb(err);
         });
     };
@@ -69,6 +75,7 @@ exports['load test data'] = function(t) {
             });
         },
         function (callback) {
+            counter = 0;
             async.forEachSeries([
                 {  data:{userId: userIds['sam'], text:'blog text 1'}},
                 {  data:{userId: userIds['sam'], text:'blog text 2'}},
@@ -82,6 +89,7 @@ exports['load test data'] = function(t) {
         },
 
         function (callback) {
+            counter = 0;
             async.forEachSeries([
                 { data:{userId: userIds['sam'], blogId:blogIds['martha4'], text:'so true'}},
                 { data:{userId: userIds['martha'], blogId:blogIds['sam1'], text:'you must be kidding'}},
@@ -107,7 +115,7 @@ exports['find user joe by id'] = function (t) {
         function(err, result) {
             if (err)
                 t.fail("query failed" + err);
-            t.equal(result.rows[0].first, 'Joe');
+            t.equal(result.first, 'Joe');
             t.done();
         }
     );
@@ -174,6 +182,18 @@ exports['update a user\'s first name and login'] = function (t) {
 
 exports['a query of the blog postings should now show the new login'] = function (t) {
     blogClient.findMany({ criteria:{ userId: userIds['sam'] }, joins:[ 'login' ] },
+        function (err, result) {
+            if (err)
+                t.fail("query failed" + err);
+            t.equal(result.rows.length, 3);
+            t.equal(result.rows[0].name, 'samuel');
+            t.done();
+        }
+    );
+};
+
+exports['view all of sam\'s blogs with comments'] = function (t) {
+    blogClient.findMany({ criteria:{ userId:userIds['sam'] }, joins:[ 'login', 'comments' ] },
         function (err, result) {
             if (err)
                 t.fail("query failed" + err);

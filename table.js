@@ -50,8 +50,9 @@ Table.prototype.selectColumnList = function (dbColumns, joinsOrPrefix) {
         var dbName = self.columnMap[col];
         if (dbName === col)
             return prefix + col;
-        else
+        else if (dbName)
             return prefix + dbName + ' AS "' + col + '"';
+        return col;
     });
 
     if (joins.length > 0)
@@ -89,7 +90,7 @@ Table.prototype.needsJoinPostProcessing = function (names) {
 
     for (var i = 0; i < names.length; i++) {
         var join = this.joins[names[i]];
-        if (join.type === Join.ONE_TO_MANY)
+        if (join && (join.type === Join.ONE_TO_MANY))
             return true;
     }
 
