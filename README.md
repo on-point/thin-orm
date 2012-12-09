@@ -19,8 +19,8 @@ really easy. Take a look at the examples in the drivers directory.
 
 ```bash
 npm install thin-orm
-npm install pg # required for postgres
-npm install sqlite3 # required for sqlite3
+npm install pg        #  required for postgres
+npm install sqlite3   #  required for sqlite3
 ```
 
 ## Overview

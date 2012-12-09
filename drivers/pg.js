@@ -18,14 +18,17 @@ function createPgDriver(context, options) {
             });
         },
 
-        getInsertQueryText: function(table) { return " RETURNING " + table.id; },
+        // gets a SQL clause to have an INSERT query return the id of the new row
+        getInsertQueryText: function(table) {
+            return " RETURNING " + table.id;
+        },
 
+        // gets the id of a new row from the result of an INSERT query
         getIdForInsert: function(table, result) {
             if (result && result.rows && result.rows.length > 0)
                 return result.rows[0][table.id];
             return -1;
         }
-
     };
 }
 

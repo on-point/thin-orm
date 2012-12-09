@@ -1,6 +1,6 @@
 {
   "name": "thin-orm",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "An object relational mapper for SQL databases",
   "main": "main",
   "scripts": {

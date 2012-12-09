@@ -11,7 +11,7 @@ Util.extend = function(obj) {
     return obj;
 };
 
-// iterator over all the keys in 'obj', call 'func' with each key/value pair
+// iterate over all the keys in 'obj', call 'func' with each key/value pair
 Util.eachKey = function(obj, func, context) {
     var keys = Object.keys(obj);
     for (var i = 0; i < keys.length; i++) {

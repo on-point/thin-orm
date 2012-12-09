@@ -18,11 +18,29 @@ var CRUD = function(driver, table, options) {
     this.defaultJoins = this.table.defaultJoins;
 };
 
-
+/*
+ * query - execute an SQL query
+ *
+ * query: the text of the query; can be parameterized with placeholders $1, $2, etc
+ * parameters: an array of values for each of the placeholders in the query
+ * callback: a function with signature (err, result) to be called with results of the query
+ */
 CRUD.prototype.query = function(query, parameters, callback) {
     this.driver.query(query, parameters, "SQL QUERY", callback);
 };
 
+/*
+ * findMany - execute a SELECT and return many rows
+ *
+ * options:
+ *   criteria: filter criteria that are applied to the WHERE clause to limit results
+ *   columns: array of column names to return
+ *   joins: array of join names to apply to the query
+ *   limit: (int) max number of rows
+ *   offset: (int) start row
+ *   sort: hash of column names mapped to ASC or DESC
+ * callback: a function with signature (err, result) to be called with results of the query
+ */
 CRUD.prototype.findMany = function(options, callback) {
     var values = [],
         query,
@@ -33,25 +51,34 @@ CRUD.prototype.findMany = function(options, callback) {
         options.criteria = Util.extend({}, this.defaultSelectCriteria, options.criteria);
 
     query = 'SELECT ' + this.table.selectColumnList(options.columns || this.selectColumns, options.joins) + ' FROM ' + this.tableName;
-    query += this.applyJoins(options);
-    query += this.applyCriteria(options, values);
+    query += this._applyJoins(options.joins);
+    query += this._applyCriteria(options, values);
 
     if (typeof(callback) !== 'function')
         callback = CRUD.returnMany(callback);
 
     if (this.table.needsJoinPostProcessing(options.joins))
-        callback = this.createJoinCallback(options, callback);
+        callback = this._createJoinCallback(options, callback);
 
     this.driver.query(query, values, this.tableName, callback);
 };
 
+/*
+ * findById - execute a SELECT using the table's unique id column and return one row
+ *
+ * id: the value of the id
+ * callback: a function with signature (err, result) to be called with results of the query
+ */
 CRUD.prototype.findById = function(id, callback) {
-    return this.findOne({criteria: { id: id }}, callback);
+    var criteria = {};
+    criteria[this.id] = id;
+    return this.findOne({ criteria: criteria }, callback);
 };
 
 /*
- * options:
- *    data - hash of values for each column name
+ * findOne - execute a SELECT with criteria and return the first row
+ * options: (same as findMany)
+ * callback: a function with signature (err, result) to be called with results of the query
  */
 CRUD.prototype.findOne = function(options, callback) {
     var values = [],
@@ -59,8 +86,8 @@ CRUD.prototype.findOne = function(options, callback) {
 
     options = options || {};
     query = 'SELECT ' + this.table.selectColumnList(options.columns || this.selectColumns, options.joins) + ' FROM ' + this.tableName;
-    query += this.applyJoins(options);
-    query += this.applyCriteria(options, values);
+    query += this._applyJoins(options.joins);
+    query += this._applyCriteria(options, values);
 
     callback = CRUD.returnOne(callback);
 
@@ -68,8 +95,11 @@ CRUD.prototype.findOne = function(options, callback) {
 };
 
 /*
+ * create - execute an INSERT and return the id of the new row
+ *
  * options:
- *    data - hash of values for each column name
+ *    data: a hash that maps column names to column values
+ * callback: a function with signature (err, result) to be called with results of the query
  */
 CRUD.prototype.create = function(options, callback) {
     var values = [],
@@ -106,14 +136,19 @@ CRUD.prototype.create = function(options, callback) {
 
     this.driver.query(query, values, this.tableName, function(err, result) {
         var id = self.driver.getIdForInsert(self.table, result);
-        callback(err, { id: id });
+        var obj = {};
+        obj[self.id] = id;
+        callback(err, obj);
     });
 };
 
 /*
- * options
- *   criteria - hash of column names mapped to values
- *   data - hash of values for each column name
+ * update - execute an UPDATE statement
+ *
+ * options:
+ *   criteria: (same as findMany)
+ *   data: a hash that maps column names to column values
+ * callback: a function with signature (err, result) to be called with results of the query
  */
 CRUD.prototype.update = function(options, callback) {
     var values = [],
@@ -144,27 +179,28 @@ CRUD.prototype.update = function(options, callback) {
     if (typeof(callback) !== 'function')
         callback = CRUD.returnResult(callback);
 
-    query += this.applyCriteria(options, values);
+    query += this._applyCriteria(options, values);
 
     this.driver.query(query, values, this.tableName, callback);
 };
 
 /*
- * options:
- *    criteria - hash of column names mapped to values
+ * remove - execute a DELETE statement to remove all rows that match the criteria
+ *
+ * optionsOrId:
+ *    criteria - (same as findMany)
+ * callback: a function with signature (err, result) to be called with results of the query
  */
-CRUD.prototype.remove = function(options, callback) {
+CRUD.prototype.remove = function(optionsOrId, callback) {
     var values = [],
         query = 'DELETE FROM ' + this.tableName;
 
-    options = options || {};
-
-    if (typeof options === 'object') {
-        query += this.applyCriteria(options, values);
-    } else if (options) {
+    if (optionsOrId && (typeof optionsOrId === 'object')) {
+        query += this._applyCriteria(optionsOrId, values);
+    } else if (optionsOrId) {
         // we were passed the row id directly
-        query += ' WHERE ' + this.table.id + ' = $1';
-        values[0] = options;
+        query += ' WHERE ' + this.id + ' = $1';
+        values[0] = optionsOrId;
     }
 
     if (typeof(callback) !== 'function')
@@ -173,17 +209,17 @@ CRUD.prototype.remove = function(options, callback) {
     this.driver.query(query, values, this.tableName, callback);
 };
 
-CRUD.prototype.applyJoins = function(options) {
+CRUD.prototype._applyJoins = function(additionalJoins) {
     var query = "",
         joins = this.defaultJoins;
 
-    if (options.joins)
-        joins = joins.concat(options.joins);
+    if (additionalJoins)
+        joins = joins.concat(additionalJoins);
 
     joins.forEach(function(joinName) {
         var join = this.table.joins[joinName];
         if (join)
-            query += this.join(join);
+            query += this._join(join);
         else
             this.logger('Table ' + this.tableName + ' is missing a join named ' + joinName);
     }, this);
@@ -192,7 +228,7 @@ CRUD.prototype.applyJoins = function(options) {
 };
 
 // build a join clause
-CRUD.prototype.join = function(criteria) {
+CRUD.prototype._join = function(criteria) {
     var query = ' LEFT OUTER JOIN ' + criteria.table + ' ON ',
         childTable = TableRegistry.getTableDefinition(criteria.table),
         onClauses = [],
@@ -213,14 +249,17 @@ CRUD.prototype.selectColumnList = function(dbColumns, joinOrPrefix) {
 };
 
 /*
- * options - hash containing:
- *   criteria - hash of column names mapped to values
- *   limit - max number of rows
- *   sort - hash of column names mapped to ASC or DESC
- * query - the query that we are generating
+ * _applyCriteria - create WHERE, ORDER BY, and LIMIT clauses for the query
+ * options:
+ *   criteria: filter criteria that are applied to the WHERE clause to limit results
+ *   columns: array of column names to return
+ *   joins: array of join names to apply to the query
+ *   limit: (int) max number of rows
+ *   offset: (int) start row
+ *   sort: hash of column names mapped to ASC or DESC
  * values - an array of parameter values
  */
-CRUD.prototype.applyCriteria = function(options, values) {
+CRUD.prototype._applyCriteria = function(options, values) {
     var i = values.length + 1,
         prefix = ' ',
         query = '',
@@ -285,9 +324,11 @@ CRUD.prototype.applyCriteria = function(options, values) {
     return query;
 };
 
-// create a callback the will postprocess the result rows by creating sub objects for each
-// one-to-many join
-CRUD.prototype.createJoinCallback = function (options, callback) {
+/*
+ * create a callback the will postprocess the result rows by creating sub objects for each
+ *  one-to-many join
+ */
+CRUD.prototype._createJoinCallback = function (options, callback) {
     var joinNames = this.defaultJoins;
     var joins = [];
     var idColumn = this.id;
