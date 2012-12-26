@@ -287,13 +287,20 @@ CRUD.prototype._applyCriteria = function(options, values) {
                     case 'GTE': operator = '>='; break;
                     case 'ne':
                     case 'NE': operator = '<>'; break;
+                    case 'between':
+                    case 'BETWEEN': operator = 'B'; break;
                     case 'like':
                     case 'LIKE': operator = 'LIKE'; break;
                     case 'ilike':
                     case 'ILIKE': operator = 'ILIKE'; break;
                 }
                 if (operator) {
-                    if ((operator === '<>') && (value[keys[0]] === null)) {
+                    if (operator === 'B') {
+                        whereClauses.push(prefix + self.columnMap[column] + ' >= $' + i++);
+                        values.push(value[keys[0]][0]);
+                        whereClauses.push(prefix + self.columnMap[column] + ' < $' + i++);
+                        values.push(value[keys[0]][1]);
+                    } else if ((operator === '<>') && (value[keys[0]] === null)) {
                         whereClauses.push(prefix + self.columnMap[column] + ' IS NOT NULL ');
                     } else {
                         whereClauses.push(prefix + self.columnMap[column] + ' ' + operator + ' $' + i++);

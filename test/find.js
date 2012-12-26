@@ -84,6 +84,19 @@ exports['a find many with multiple criteria and comparison operator'] = function
     t.done();
 };
 
+exports['a find many with between comparison operator'] = function (t) {
+    setup();
+    var aWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000);
+    var now = new Date();
+    blogs.findMany({ criteria:{ createdAt:{ BETWEEN: [aWeekAgo, now] }}}, callback);
+    t.ok(/SELECT\s+id.*user_id.*text.*created_at.*FROM\s+blogs\s+WHERE\s+created_at\s+>=\s+\$1\s+AND\s+created_at\s+<\s+\$2/.test(data.query), 'generates a select');
+    t.equal(data.params.length, 2);
+    t.equal(data.params[0], aWeekAgo);
+    t.equal(data.params[1], now);
+    t.ok(data.callbackCalled, "callback was called");
+    t.done();
+};
+
 exports['a query for a column with a null value'] = function (t) {
     setup();
     blogs.findMany({ criteria: { text: null }}, callback);
