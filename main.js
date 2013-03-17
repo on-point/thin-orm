@@ -13,7 +13,7 @@ API.createClient = function(driver, tableName) {
 };
 
 API.createDriver = function (name, options) {
-    this.logger = console.log;
+    this.logger = options.logger || console.log;
     var driver = require("./drivers/" + name);
     return driver(this, options);
 };
