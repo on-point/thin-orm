@@ -40,7 +40,7 @@ Now we are ready to create a client driver connection and run queries:
 ```js
 var sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database(':memory:'),
-    driver = orm.createDriver('sqlite', { db: db }) }),
+    driver = orm.createDriver('sqlite', { db: db }),
     userClient = ORM.createClient(driver, 'users');
 
 userClient.create({ data: { login: 'joe', firstName: 'Joe', lastName: 'Smith'}}, callback);
