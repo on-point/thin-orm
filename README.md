@@ -204,3 +204,9 @@ thin-orm will call that method with the result rows. The data returned to the ca
 
 MIT
 
+## Tests
+
+```bash
+npm install nodeunit
+npm test
+```
