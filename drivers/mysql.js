@@ -13,7 +13,7 @@ function createMySQLDriver(context, options) {
                     self.logger('query on ' + id + ':\n\ttext: ' + queryPrepared + JSON.stringify(parametersPrepared) + '\n\tfailed: ' + err);
                 else
                     self.logger('query on ' + id + ':\n\ttext: ' + queryPrepared + '\n\tparams: ' + JSON.stringify(parametersPrepared) + '\n\treturns ' + JSON.stringify(result));
-                callback(err, result);
+                callback(err, {rows:result, count: result.fieldCount, insertId:result.insertId});
             });
 
         },

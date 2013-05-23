@@ -4,7 +4,6 @@ if(!process.env.MySQL_URL){
     console.error('export MySQL_URL="mysql://username:password@localhost/dbname?reconnect=true"; npm test');
     process.exit(1);
 }
-
 var ORM = require('../../main');
 var db = require('mysql').createConnection(process.env.MySQL_URL);
 var async = require('async');
@@ -29,7 +28,7 @@ var setup = function(t) {
             db.query('drop table ' + usersTableName, ignore(cb));
         },
         function (cb) {
-            db.query('create table ' + usersTableName + '(id INTEGER PRIMARY KEY, login varchar(30), first varchar(50), last varchar(50))', cb);
+            db.query('create table ' + usersTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, login char(30), first char(50), last char(50))', cb);
         },
         function (cb) {
             db.query('delete ' + blogsTableName, ignore(cb));
@@ -38,7 +37,7 @@ var setup = function(t) {
             db.query('drop table ' + blogsTableName, ignore(cb));
         },
         function (cb) {
-            db.query('create table ' + blogsTableName + '(id INTEGER PRIMARY KEY, user_id integer, "text" varchar(65535), created_at date)', cb);
+            db.query('create table ' + blogsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, user_id integer, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
         },
         function (cb) {
             db.query('delete ' + commentsTableName, ignore(cb));
@@ -47,7 +46,7 @@ var setup = function(t) {
             db.query('drop table ' + commentsTableName, ignore(cb));
         },
         function (cb) {
-            db.query('create table ' + commentsTableName + '(id INTEGER PRIMARY KEY, blog_id integer, user_id integer, "text" varchar(65535), created_at date)', cb);
+            db.query('create table ' + commentsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, blog_id integer, user_id integer, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
         }
     ], function (err, result) {
             if (err)
@@ -65,3 +64,4 @@ for (var key in blog) {
     if (key !== "externalSetup")
         exports[key] = blog[key];
 }
+
