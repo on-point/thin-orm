@@ -6,12 +6,10 @@ if(!process.env.MySQL_URL){
 }
 
 var ORM = require('../../main');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(':memory:');
 var db = require('mysql').createConnection(process.env.MySQL_URL);
 var async = require('async');
 var blog = require('./common/blog');
-var prefix = 'thinorm_',
+var prefix = 'vodolaz095_',
     usersTableName = prefix + 'users',
     blogsTableName = prefix + 'blogs',
     commentsTableName = prefix + 'comments';
