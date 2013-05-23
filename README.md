@@ -10,7 +10,7 @@ Thin-orm sits on top of a node client for your database. It has built in support
 
 * postgresql: [node-postgres (pg)](https://github.com/brianc/node-postgres)
 * sqlite3: [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
-* mysql: [node-mysql (mysql)](https://github.com/felixge/node-mysql) - created by (Vodolaz095)[https://github.com/vodolaz095]
+* mysql: [node-mysql (mysql)](https://github.com/felixge/node-mysql) - created by [Vodolaz095](https://github.com/vodolaz095)
 
 If your SQL database is not listed here, don't worry. Interfacing to a node database driver is
 really easy. Take a look at the examples in the drivers directory.
