@@ -2,7 +2,7 @@
   "name": "thin-orm",
   "version": "0.1.4",
   "description": "An object relational mapper for SQL databases",
-  "main": "main",
+  "main": "main.js",
   "scripts": {
     "test": "nodeunit test"
   },
@@ -10,7 +10,8 @@
         "nodeunit": "0.7.x",
         "async": "0.1.x",
         "pg": "0.8.x",
-        "sqlite3": "2.1.x"
+        "sqlite3": "2.1.x",
+        "mysql":"2.0.0-alpha8"
   },
   "engines": {"node": ">= 0.8.0"},
   "repository": {
