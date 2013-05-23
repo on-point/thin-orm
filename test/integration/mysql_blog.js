@@ -23,31 +23,31 @@ function ignore(cb) {
 var setup = function(t) {
     async.series([
         function (cb) {
-            db.run('delete ' + usersTableName, ignore(cb));
+            db.query('delete ' + usersTableName, ignore(cb));
         },
         function (cb) {
-            db.run('drop table ' + usersTableName, ignore(cb));
+            db.query('drop table ' + usersTableName, ignore(cb));
         },
         function (cb) {
-            db.run('create table ' + usersTableName + '(id INTEGER PRIMARY KEY, login varchar(30), first varchar(50), last varchar(50))', cb);
+            db.query('create table ' + usersTableName + '(id INTEGER PRIMARY KEY, login varchar(30), first varchar(50), last varchar(50))', cb);
         },
         function (cb) {
-            db.run('delete ' + blogsTableName, ignore(cb));
+            db.query('delete ' + blogsTableName, ignore(cb));
         },
         function (cb) {
-            db.run('drop table ' + blogsTableName, ignore(cb));
+            db.query('drop table ' + blogsTableName, ignore(cb));
         },
         function (cb) {
-            db.run('create table ' + blogsTableName + '(id INTEGER PRIMARY KEY, user_id integer, "text" varchar(65535), created_at date)', cb);
+            db.query('create table ' + blogsTableName + '(id INTEGER PRIMARY KEY, user_id integer, "text" varchar(65535), created_at date)', cb);
         },
         function (cb) {
-            db.run('delete ' + commentsTableName, ignore(cb));
+            db.query('delete ' + commentsTableName, ignore(cb));
         },
         function (cb) {
-            db.run('drop table ' + commentsTableName, ignore(cb));
+            db.query('drop table ' + commentsTableName, ignore(cb));
         },
         function (cb) {
-            db.run('create table ' + commentsTableName + '(id INTEGER PRIMARY KEY, blog_id integer, user_id integer, "text" varchar(65535), created_at date)', cb);
+            db.query('create table ' + commentsTableName + '(id INTEGER PRIMARY KEY, blog_id integer, user_id integer, "text" varchar(65535), created_at date)', cb);
         }
     ], function (err, result) {
             if (err)
