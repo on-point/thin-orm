@@ -25,6 +25,7 @@
     "postgresql",
     "sqlite",
     "sqlite3",
+    "mysql",
     "sql"
   ],
   "author": "Steve Hurlbut <steve@onpointapplications.com>",
