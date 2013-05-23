@@ -42,16 +42,18 @@ Now we are ready to create a client driver connection and run queries:
 ```js
 var sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database(':memory:');
+var driver = orm.createDriver('sqlite', { db: db });
 
 //for using MySQL database
 //var db = require('mysql').createConnection('mysql://username:password@localhost/dbname?reconnect=true');
+//var driver = orm.createDriver('mysql', { db: db });
 
 //for using with MySQL database
 //var pg = require('pg');
 //var db = new pg.Client('tcp://username:password@localhost/dbname');
+//var driver = orm.createDriver('pg', { db: db });
 
-var driver = orm.createDriver('sqlite', { db: db }),
-    userClient = ORM.createClient(driver, 'users');
+var userClient = ORM.createClient(driver, 'users');
 
 userClient.create({ data: { login: 'joe', firstName: 'Joe', lastName: 'Smith'}}, callback);
 // callback result: { id: 1 }
