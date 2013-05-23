@@ -210,3 +210,5 @@ MIT
 npm install nodeunit
 npm test
 ```
+
+[![Build Status](https://travis-ci.org/vodolaz095/thin-orm.png?branch=master)](https://travis-ci.org/vodolaz095/thin-orm)
