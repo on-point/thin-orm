@@ -25,13 +25,13 @@ var setup = function(t) {
             db.query('DROP TABLE IF EXISTS ' + blogsTableName, cb);
         },
         function (cb) {
-            db.query('create table ' + blogsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, user_id integer, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
+            db.query('create table ' + blogsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, user_id int, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
         },
         function (cb) {
             db.query('DROP TABLE IF EXISTS  ' + commentsTableName, cb);
         },
         function (cb) {
-            db.query('create table ' + commentsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, blog_id integer, user_id integer, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
+            db.query('create table ' + commentsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, blog_id int, user_id int, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
         }
     ], function (err, result) {
             if (err)
@@ -49,4 +49,3 @@ for (var key in blog) {
     if (key !== "externalSetup")
         exports[key] = blog[key];
 }
-

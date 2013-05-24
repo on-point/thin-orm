@@ -14,7 +14,7 @@ function createMySQLDriver(context, options) {
                 } else {
                     self.logger('query on ' + id + ':\n\ttext: ' + queryPrepared + '\n\tparams: ' + JSON.stringify(parametersPrepared) + '\n\treturns ' + JSON.stringify(result));
                 }
-                if(result.length==1 && result.insertId!=undefined && result.affectedRows!=undefined && result.changedRows!= undefined){
+                if(typeof result.insertId !='undefined' && typeof result.affectedRows != 'undefined' && typeof result.changedRows!= 'undefined'){
                     //this is update/delete/insert query
                     /*
                      result:{ fieldCount: 0,
@@ -26,16 +26,18 @@ function createMySQLDriver(context, options) {
                      protocol41: true,
                      changedRows: 0 }
                      */
-                    callback(err, {rows:result.affectedRows, count: result.fieldCount, insertId:result.insertId});
+                    callback(err, {sql:query, changes:result.changedRows, lastID:result.insertId});
                 } else {
                     //this is select query
                     /*
                      result:[{id:1,name:'lalala1'},{id:2,name:'lalala2'},.....]
                      */
-
-                    callback(err, {rows:result, count: result.length});
+                    if(result.length==1){
+                        callback(err, result[0]);
+                    } else {
+                        callback(err, result);
+                    }
                 }
-
             });
 
         },
