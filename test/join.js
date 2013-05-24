@@ -39,6 +39,7 @@ exports['table definitions'] = function (t) {
 exports['caller can specify a one to one join'] = function (t) {
     setup();
     blogClient.findMany({ criteria:{ userId: 1 }, joins:[ 'login' ] }, function(err,result){
+        if(err) throw err;
         t.equal(data.params.length, 1);
         t.ok(/SELECT\s+blogs.id.*blogs.user_id.*blogs.text.*blogs.created_at.*users.login\s+AS\s+"name"\s+FROM\s+blogs\s+LEFT\s+OUTER\s+JOIN\s+users\s+ON\s+blogs.user_id\s+=\s+users.id\s+WHERE\s+blogs.user_id\s+=\s+\$1/.test(data.query), 'generates a select');
         t.done();
@@ -48,6 +49,7 @@ exports['caller can specify a one to one join'] = function (t) {
 exports['caller can specify a one to many join'] = function (t) {
     setup();
     blogClient.findMany({ criteria:{ userId:1 }, joins:[ 'comments' ] }, function(err,result){
+        if(err) throw err;
         t.equal(data.params.length, 1);
         t.ok(/SELECT\s+blogs.id.*blogs.user_id.*blogs.text.*blogs.created_at.*.*comments.id.*comments.user_id.*comments.blog_id.*comments.text.*comments.created_at.*FROM\s+blogs\s+LEFT\s+OUTER\s+JOIN\s+comments\s+ON\s+blogs.id\s+=\s+comments.blog_id\s+WHERE\s+blogs.user_id\s+=\s+\$1/.test(data.query), 'generates a select');
         t.done();
@@ -57,6 +59,7 @@ exports['caller can specify a one to many join'] = function (t) {
 exports['a default join should always be incorporated into the query'] = function (t) {
     setup();
     commentClient.findMany({ criteria:{ userId:1 }}, function(err,result){
+        if(err) throw err;
         t.equal(data.params.length, 1);
         t.ok(/SELECT\s+comments.id.*comments.user_id.*comments.blog_id.*comments.text.*comments.created_at.*users.login.*FROM\s+comments\s+LEFT\s+OUTER\s+JOIN\s+users\s+ON\s+comments.user_id\s+=\s+users.id\s+WHERE\s+comments.user_id\s+=\s+\$1/.test(data.query), 'generates a select');
         t.done();
