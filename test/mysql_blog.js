@@ -16,7 +16,7 @@ var prefix = 'thinorm_',
 var setup = function(t) {
     async.series([
         function (cb) {
-            db.query('delete ' + usersTableName, cb);
+            db.query('truncate ' + usersTableName, cb);
         },
         function (cb) {
             db.query('drop table ' + usersTableName, cb);
@@ -25,7 +25,7 @@ var setup = function(t) {
             db.query('create table ' + usersTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, login char(30), first char(50), last char(50))', cb);
         },
         function (cb) {
-            db.query('delete ' + blogsTableName, cb);
+            db.query('truncate ' + blogsTableName, cb);
         },
         function (cb) {
             db.query('drop table ' + blogsTableName, cb);
@@ -34,7 +34,7 @@ var setup = function(t) {
             db.query('create table ' + blogsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, user_id integer, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
         },
         function (cb) {
-            db.query('delete ' + commentsTableName, cb);
+            db.query('truncate ' + commentsTableName, cb);
         },
         function (cb) {
             db.query('drop table ' + commentsTableName, cb);
