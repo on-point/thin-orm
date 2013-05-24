@@ -4,7 +4,7 @@ if(!process.env.MySQL_URL){
     console.error('export MySQL_URL="mysql://username:password@localhost/dbname?reconnect=true"; npm test');
     process.exit(1);
 }
-var ORM = require('../../main');
+var ORM = require('./../main.js');
 var db = require('mysql').createConnection(process.env.MySQL_URL);
 var async = require('async');
 var blog = require('./common/blog');

@@ -4,3 +4,13 @@ node_js:
   - 0.9
   - 0.10
   - 0.11
+
+before_script:
+  - mysql -e 'create database thin_orm_test;'
+  - export MySQL_URL="mysql://root@127.0.0.1/thin_orm_test"
+  - psql -c 'create database thin_orm_test;' -U postgres
+  - export PG_URL="tcp://postgres@127.0.0.1/thin_orm_test"
+  - export PG_USER="postgres";
+  - export PG_PW="";
+  - export PG_DB="thin_orm_test";
+

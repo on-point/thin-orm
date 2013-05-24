@@ -1,4 +1,4 @@
-var ORM = require('../main'),
+var ORM = require('./../main.js'),
     blogs,
     tableName = 'blogs',
     columns = ['id', 'userId', 'text', 'createdAt'],
