@@ -7,14 +7,20 @@ function createMySQLDriver(context, options) {
             } else {
                 var parametersPrepared = [parameters];
             }
-            var queryPrepared = query.replace(/\$\d/g, '?');
+            var queryPrepared = query.replace(/\$\d+/g, '?');
             options.db.query(queryPrepared, parametersPrepared, function (err, result, info) {
                 if (err){
                     self.logger('query on ' + id + ':\n\ttext: ' + queryPrepared + JSON.stringify(parametersPrepared) + '\n\tfailed: ' + err);
                 } else {
                     self.logger('query on ' + id + ':\n\ttext: ' + queryPrepared + '\n\tparams: ' + JSON.stringify(parametersPrepared) + '\n\treturns ' + JSON.stringify(result));
                 }
-                if(typeof result.insertId !='undefined' && typeof result.affectedRows != 'undefined' && typeof result.changedRows!= 'undefined'){
+                if(/^select/i.test(query)){
+                    //this is select query
+                    /*
+                     result:[{id:1,name:'lalala1'},{id:2,name:'lalala2'},.....]
+                     */
+                    callback(err, {rows: result, count: result.length});
+                } else {
                     //this is update/delete/insert query
                     /*
                      result:{ fieldCount: 0,
@@ -27,12 +33,6 @@ function createMySQLDriver(context, options) {
                      changedRows: 0 }
                      */
                     callback(err, {sql:query, changes:result.changedRows, lastID:result.insertId});
-                } else {
-                    //this is select query
-                    /*
-                     result:[{id:1,name:'lalala1'},{id:2,name:'lalala2'},.....]
-                     */
-                    callback(err, {rows: result, count: result.length});
                 }
             });
 
