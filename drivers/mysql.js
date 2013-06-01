@@ -32,11 +32,7 @@ function createMySQLDriver(context, options) {
                     /*
                      result:[{id:1,name:'lalala1'},{id:2,name:'lalala2'},.....]
                      */
-                    if(result.length==1){
-                        callback(err, result[0]);
-                    } else {
-                        callback(err, result);
-                    }
+                    callback(err, {rows: result, count: result.length});
                 }
             });
 
