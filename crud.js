@@ -167,7 +167,7 @@ CRUD.prototype.update = function(options, callback) {
         } else if (column === 'updatedAt') {
             values[j++] = new Date();
             query += this.columnMap[column] + ' = $' + j + ', ';
-        } else if (data[column]) {
+        } else if (column in data) {
             values[j++] = data[column];
             query += this.columnMap[column] + ' = $' + j + ', ';
         }
@@ -307,7 +307,7 @@ CRUD.prototype._applyCriteria = function(options, values) {
                         values.push(value[keys[0]]);
                     }
                 } else {
-                    this.logger("ERROR");
+                    self.logger("ERROR");
                 }
             } else {
                 whereClauses.push(prefix + self.columnMap[column] + ' = $' + i++);
