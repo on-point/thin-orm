@@ -307,7 +307,7 @@ CRUD.prototype._applyCriteria = function(options, values) {
                         values.push(value[keys[0]]);
                     }
                 } else {
-                    this.logger("ERROR");
+                    self.logger("ERROR");
                 }
             } else {
                 whereClauses.push(prefix + self.columnMap[column] + ' = $' + i++);
