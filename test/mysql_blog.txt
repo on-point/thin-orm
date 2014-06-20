@@ -1,0 +1,51 @@
+if(!process.env.MySQL_URL){
+    console.error('Set environment variable MySQL_URL');
+    console.error('For example, like this before running tests:');
+    console.error('export MySQL_URL="mysql://username:password@localhost/dbname?reconnect=true"; npm test');
+    process.exit(1);
+}
+var ORM = require('./../main.js');
+var db = require('mysql').createConnection(process.env.MySQL_URL);
+var async = require('async');
+var blog = require('./common/blog');
+var prefix = 'thinorm_',
+    usersTableName = prefix + 'users',
+    blogsTableName = prefix + 'blogs',
+    commentsTableName = prefix + 'comments';
+
+var setup = function(t) {
+    async.series([
+        function (cb) {
+            db.query('DROP TABLE IF EXISTS ' + usersTableName, cb);
+        },
+        function (cb) {
+            db.query('create table ' + usersTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, login char(30), first char(50), last char(50))', cb);
+        },
+        function (cb) {
+            db.query('DROP TABLE IF EXISTS ' + blogsTableName, cb);
+        },
+        function (cb) {
+            db.query('create table ' + blogsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, user_id int, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
+        },
+        function (cb) {
+            db.query('DROP TABLE IF EXISTS  ' + commentsTableName, cb);
+        },
+        function (cb) {
+            db.query('create table ' + commentsTableName + '(id int unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT, blog_id int, user_id int, `text` text, created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL)', cb);
+        }
+    ], function (err, result) {
+            if (err)
+                t.fail("setup failed" + err);
+            t.done();
+        }
+    );
+};
+
+blog.externalSetup({ driver: ORM.createDriver('mysql', { db: db }) });
+
+exports['setup'] = setup;
+
+for (var key in blog) {
+    if (key !== "externalSetup")
+        exports[key] = blog[key];
+}

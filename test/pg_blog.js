@@ -1,4 +1,4 @@
-var ORM = require('../../main'),
+var ORM = require('./../main.js'),
     pg = require('pg'),
     async = require('async'),
     blog = require('./common/blog'),

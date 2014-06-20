@@ -10,6 +10,7 @@ Thin-orm sits on top of a node client for your database. It has built in support
 
 * postgresql: [node-postgres (pg)](https://github.com/brianc/node-postgres)
 * sqlite3: [node-sqlite3](https://github.com/developmentseed/node-sqlite3)
+* mysql: [node-mysql (mysql)](https://github.com/felixge/node-mysql) - created by [Vodolaz095](https://github.com/vodolaz095)
 
 If your SQL database is not listed here, don't worry. Interfacing to a node database driver is
 really easy. Take a look at the examples in the drivers directory.
@@ -19,8 +20,9 @@ really easy. Take a look at the examples in the drivers directory.
 
 ```bash
 npm install thin-orm
-npm install pg        #  required for postgres
-npm install sqlite3   #  required for sqlite3
+npm install pg                   #  required for postgres
+npm install sqlite3              #  required for sqlite3
+npm install mysql@2.0.0-alpha8   #  required for mysql
 ```
 
 ## Overview
@@ -39,9 +41,19 @@ Now we are ready to create a client driver connection and run queries:
 
 ```js
 var sqlite3 = require('sqlite3').verbose(),
-    db = new sqlite3.Database(':memory:'),
-    driver = orm.createDriver('sqlite', { db: db }) }),
-    userClient = ORM.createClient(driver, 'users');
+    db = new sqlite3.Database(':memory:');
+var driver = orm.createDriver('sqlite', { db: db });
+
+//for using MySQL database
+//var db = require('mysql').createConnection('mysql://username:password@localhost/dbname?reconnect=true');
+//var driver = orm.createDriver('mysql', { db: db });
+
+//for using with MySQL database
+//var pg = require('pg');
+//var db = new pg.Client('tcp://username:password@localhost/dbname');
+//var driver = orm.createDriver('pg', { db: db });
+
+var userClient = ORM.createClient(driver, 'users');
 
 userClient.create({ data: { login: 'joe', firstName: 'Joe', lastName: 'Smith'}}, callback);
 // callback result: { id: 1 }
@@ -192,3 +204,11 @@ thin-orm will call that method with the result rows. The data returned to the ca
 
 MIT
 
+## Tests
+
+```bash
+npm install nodeunit
+npm test
+```
+
+[![Build Status](https://travis-ci.org/vodolaz095/thin-orm.png?branch=master)](https://travis-ci.org/vodolaz095/thin-orm)

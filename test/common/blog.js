@@ -1,4 +1,4 @@
-var ORM = require('../../../main'),
+var ORM = require('./../../main.js'),
     async = require('async'),
     driver,
     userClient,
